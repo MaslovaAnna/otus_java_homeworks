@@ -15,16 +15,16 @@ public class HomeWork1 {
         if (var == 1) {
             greetings();
         } else if (var == 2) {
-            int a = (int)(Math.random()*10)-5;
-            int b = (int)(Math.random()*10)-5;
-            int c = (int)(Math.random()*10)-5;
+            int a = (int)(Math.random() * 10) - 5;
+            int b = (int)(Math.random() * 10) - 5;
+            int c = (int)(Math.random() * 10) - 5;
             checkSign(a, b, c);
         } else if (var == 3) {
             selectColor();
         } else if (var == 4) {
             compareNumbers();
         } else if (var == 5) {
-            int initValue = (int)(Math.random()*10);
+            int initValue = (int)(Math.random() * 10);
             int delta = new Random().nextInt();
             boolean increment = new Random().nextBoolean();
             addOrSubtractAndPrint(initValue, delta, increment);
