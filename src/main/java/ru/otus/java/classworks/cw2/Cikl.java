@@ -8,7 +8,7 @@ public class Cikl {
         for (int i = 20; i < 40; i += 2) {
             System.out.println((i + 1) + ". Java");
         }
-        int n = 1;
+        //int n = 1;
         //int m = n++ + ++n;//n=1+ -> n++==n+1=2 -> ++n==1+n=3-> +3
         int[] arr = new int[14];
         System.out.println(Arrays.toString(arr));
