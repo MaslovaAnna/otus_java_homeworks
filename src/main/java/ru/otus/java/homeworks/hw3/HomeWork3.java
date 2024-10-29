@@ -91,7 +91,7 @@ public class HomeWork3 {
         if (args.length <= 1) {
             return -1;
         } else {
-            int sum =0;
+            int sum = 0;
             for (int i = 0; i < args[1].length; i++) {
                 sum +=args[1][i];
             }
