@@ -5,7 +5,8 @@ import java.util.Arrays;
 
 public class Cikl {
     public static void main(String[] args) {
-        for (int i = 20; i < 40; i += 2) {
+        int a = 20;
+        for (int i = 20; i < a+20; i += 2) {
             System.out.println((i + 1) + ". Java");
         }
         //int n = 1;

@@ -51,7 +51,7 @@ public class HomeWork2 {
         Arrays.fill(args, b); //использовали на практическом занятии 6
         //for (int i = 0; i < args.length; i++) {
             //args[i]=b;
-        //}\
+        //}
         return args;
     }
     /*
