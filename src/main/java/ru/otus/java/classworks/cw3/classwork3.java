@@ -14,12 +14,12 @@ public class classwork3 {
                 "strawberry", "cherry",
                 "banana", "orange"
         };
-        minMax(arr);
-        autoSort(arr);
-        guessfruit(fruits);
-        diffFruit(fruits);
+        //minMax(arr);
+        //autoSort(arr);
+        //guessfruit(fruits);
+        //diffFruit(fruits);
         poleChudes(fruits);
-        ruksak();
+        //ruksak();
     }
 
     public static void minMax(int[] arr) {
@@ -171,9 +171,9 @@ public class classwork3 {
         inventary.print();
         inventary.add(board);
         inventary.print();
-        System.out.println("Всего предметов" + inventary.count());
-        inventary.drop(bread);
-        inventary.use(board);
+        System.out.println("Всего предметов " + inventary.count());
+        //inventary.drop(bread);
+        inventary.use(bread);
         inventary.print();
     }
 
