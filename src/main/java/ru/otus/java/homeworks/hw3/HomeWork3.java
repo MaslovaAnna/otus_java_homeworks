@@ -71,7 +71,7 @@ public class HomeWork3 {
     который должен найти и вернуть максимальный элемент массива;
      */
     public static int findMax(int[][] array) {
-        int max = array[1][1];
+        int max = array[0][0];
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
                 if (max < array[i][j]) {
@@ -90,12 +90,11 @@ public class HomeWork3 {
     public static int summaOr_1(int[][] args) {
         if (args.length <= 1) {
             return -1;
-        } else {
-            int sum = 0;
-            for (int i = 0; i < args[1].length; i++) {
-                sum +=args[1][i];
-            }
-            return sum;
         }
+        int sum = 0;
+        for (int i = 0; i < args[1].length; i++) {
+            sum +=args[1][i];
+        }
+        return sum;
     }
 }
