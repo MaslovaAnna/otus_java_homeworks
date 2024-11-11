@@ -50,29 +50,29 @@ public class Box {
     }
 
     public void addItem(String item) {
-        if (opened) {
-            if (this.item != null) {
-                System.out.println("В коробку не влезет " + item + ". В коробке уже лежит " + this.item);
-            } else {
-                this.item = item;
-                System.out.println("В коробкe лежит " + this.item);
-            }
-        } else {
+        if (!opened) {
             System.out.println("Нельзя взаимодействовать с закрытой коробкой!!! Сначала откройте ее!!!");
+            return;
         }
+        if (this.item != null) {
+            System.out.println("В коробку не влезет " + item + ". В коробке уже лежит " + this.item);
+            return;
+        }
+        this.item = item;
+        System.out.println("В коробкe лежит " + this.item);
     }
 
     public void throwOutItem() {
-        if (opened) {
-            if (this.item == null) {
-                System.out.println("Нечего выкидывать. В коробке пусто");
-            } else {
-                System.out.println("Выкинули " + this.item);
-                this.item = null;
-            }
-        } else {
+        if (!opened) {
             System.out.println("Нельзя взаимодействовать с закрытой коробкой!!! Сначала откройте ее!!!");
+            return;
         }
+        if (this.item == null) {
+            System.out.println("Нечего выкидывать. В коробке пусто");
+            return;
+        }
+        System.out.println("Выкинули " + this.item);
+        this.item = null;
     }
 
     public void changeColor(String color) {
