@@ -21,9 +21,9 @@ public class Users40 {
                 new User("Klimova", "Sveta", "Alekseevna", 1985, "al@ma.ru"),
                 new User("Viniloba", "Lida", "Antonovna", 1977, "an@ma.ru"),
         };
-        int today = LocalDate.now().getYear();
+        int currentYear = LocalDate.now().getYear();
         for (User u : users) {
-            if ((today - u.getYear()) > 40) {
+            if ((currentYear - u.getYear()) > 40) {
                 u.info();
             }
         }

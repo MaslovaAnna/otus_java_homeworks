@@ -22,16 +22,11 @@ public class Box {
         this.dlina = dlina;
         this.shirina = shirina;
         this.color = color;
-        this.item = null;
     }
 
     public void info() {
         System.out.println("Размеры коробки: " + dlina + "x" + shirina + "\nЦвет: " + color);
-        if (opened) {
-            System.out.println("Коробка открыта");
-        } else {
-            System.out.println("Коробка закрыта");
-        }
+        System.out.println(opened ? "Коробка открыта" : "Коробка закрыта");
         if (item != null) {
             System.out.println("В коробке лежит " + item);
         } else {
