@@ -25,9 +25,7 @@ public class App {
         for (Cat c: cats) {
             c.feeding(plate.getCurrentFood());
             plate.eatingFood(c.getAppetite());
-            for (int i = 0; i < fullCats.length; i++) {
-                fullCats[i] = c.isFull();
-            }
+            fullCats[Arrays.asList(cats).indexOf(c)] = c.isFull();
         }
         System.out.println(Arrays.toString(fullCats));
     }

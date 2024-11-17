@@ -36,8 +36,8 @@ public class Plate {
      */
     public boolean eatingFood(int food) {
         currentFood -= food;
-        if (currentFood <= 0) {
-            System.out.println("В тарелке больше нет еды");
+        if (currentFood < 0) {
+            System.out.println("В тарелке не хватает еды");
             currentFood = 0;
             return false;
         } else {
