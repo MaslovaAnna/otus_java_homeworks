@@ -21,6 +21,7 @@ public abstract class Animal {
     protected int power;
     protected int time;
     private final int powerPerRun;
+    protected int powerPerSwim;
 
 
     public  Animal(String name, int swimSpeed, int runSpeed, int power) {
@@ -46,6 +47,17 @@ public abstract class Animal {
         if (power == 0) {
             System.out.println(name + " устал");
         }
+        return time;
+    }
+
+    public int swim(int distance) {
+        power -= powerPerSwim * distance;
+        if (power <= 0) {
+            System.out.println("У " + name + " закончилась выносливость и он утонул");
+            return -1;
+        }
+        time = distance/swimSpeed;
+        System.out.println(name + " проплыл " + distance + " метра за " + time + " сек");
         return time;
     }
 }
