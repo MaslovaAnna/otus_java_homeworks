@@ -23,8 +23,7 @@ public class App {
         то есть не может быть наполовину сыт (это сделано для упрощения логики программы).
         */
         for (Cat c: cats) {
-            c.feeding(plate.getCurrentFood());
-            plate.eatingFood(c.getAppetite());
+            c.feeding(plate);
             fullCats[Arrays.asList(cats).indexOf(c)] = c.isFull();
         }
         System.out.println(Arrays.toString(fullCats));

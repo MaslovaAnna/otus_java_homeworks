@@ -20,7 +20,7 @@ public class Plate {
         После добавления в тарелке не может оказаться еды больше максимума
          */
         currentFood += food;
-        if (currentFood >= maxFood) {
+        if (currentFood > maxFood) {
             System.out.println("В тарелке не может быть еды больше чем " + currentFood);
             currentFood = maxFood;
         } else {
@@ -35,18 +35,12 @@ public class Plate {
     чтобы в тарелке осталось >= 0 кусков еды, то возвращаем true, в противном случае - false).
      */
     public boolean eatingFood(int food) {
-        currentFood -= food;
-        if (currentFood < 0) {
+        if (currentFood < food) {
             System.out.println("В тарелке не хватает еды");
-            currentFood = 0;
             return false;
-        } else {
-            System.out.println("В тарелке: " + currentFood + " еды");
-            return true;
         }
-    }
-
-    public int getCurrentFood() {
-        return currentFood;
+        currentFood -= food;
+        System.out.println("В тарелке: " + currentFood + " еды");
+        return true;
     }
 }

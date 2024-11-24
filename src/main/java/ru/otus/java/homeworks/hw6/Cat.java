@@ -13,21 +13,14 @@ public class Cat {
         this.appetite = appetite;
     }
 
-    public void feeding(int food) {
-        if (appetite <= food) {
+    public void feeding(Plate plate) {
+        if (plate.eatingFood(appetite)) {
             full = true;
-            System.out.println(name + " наелся");
-        }
-        else {
-            full = false;
-            System.out.println(name + " мало еды");}
-    }
-
-    public int getAppetite() {
-        return appetite;
+            System.out.println(name + " поел");
+        }    else System.out.println(name + " не поел");
     }
 
     public String isFull() {
-        return full? name + " сыт" : name + " голоден";
+        return full ? name + " сыт" : name + " голоден";
     }
 }
