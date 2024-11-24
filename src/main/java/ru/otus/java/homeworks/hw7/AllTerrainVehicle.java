@@ -1,6 +1,6 @@
 package ru.otus.java.homeworks.hw7;
 
-import static ru.otus.java.homeworks.hw7.TransportType.AllTERRAINVEHICLE;
+import static ru.otus.java.homeworks.hw7.TransportType.ALL_TERRAIN_VEHICLE;
 
 public class AllTerrainVehicle implements Transport {
     protected int resurs;
@@ -22,7 +22,7 @@ public class AllTerrainVehicle implements Transport {
     }
 
     public TransportType getType() {
-        return AllTERRAINVEHICLE;
+        return ALL_TERRAIN_VEHICLE;
     }
 
     public int getResurs() {
