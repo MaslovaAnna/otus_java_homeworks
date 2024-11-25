@@ -2,9 +2,9 @@ package ru.otus.java.homeworks.hw6;
 
 public class Cat {
 
-    protected String name;
-    protected int appetite;
-    protected boolean full;
+    private String name;
+    private int appetite;
+    private boolean full;
 
     //Каждому коту нужно добавить поле сытость (когда создаем котов, они голодны).
     //Если коту удалось покушать (хватило еды), сытость = true.
@@ -17,7 +17,9 @@ public class Cat {
         if (plate.eatingFood(appetite)) {
             full = true;
             System.out.println(name + " поел");
-        }    else System.out.println(name + " не поел");
+        } else {
+            System.out.println(name + " не поел");
+        }
     }
 
     public String isFull() {

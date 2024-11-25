@@ -5,8 +5,8 @@ public class Plate {
     Реализуйте классы Тарелка (максимальное количество еды, текущее количество еды) и Кот (имя, аппетит).
     Количество еды измеряем в условных единицах.
      */
-    protected int maxFood;
-    protected int currentFood;
+    private int maxFood;
+    private int currentFood;
 
     //    При создании тарелки указывается ее объем и она полностью заполняется едой
     public Plate(int maxFood) {
