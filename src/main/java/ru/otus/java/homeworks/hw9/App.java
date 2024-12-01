@@ -2,6 +2,7 @@ package ru.otus.java.homeworks.hw9;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 
 public class App {
@@ -14,7 +15,7 @@ public class App {
         System.out.println(sum(str));
         addA(4, str);
         rewrite(3, str);
-        ArrayList<Employee> employees = new ArrayList<>();
+        List<Employee> employees = new ArrayList<>();
         employees.add(new Employee("Artem", 56));
         employees.add(new Employee("Nikita", 50));
         employees.add(new Employee("Stas", 35));
@@ -77,8 +78,8 @@ public class App {
     /*
     Реализуйте метод, принимающий в качестве аргумента список сотрудников, и возвращающий список их имен;
      */
-    public static ArrayList<String> getNames(ArrayList<Employee> employees) {
-        ArrayList<String> names = new ArrayList<>();
+    public static List<String> getNames(List<Employee> employees) {
+        List<String> names = new ArrayList<>();
         for (Employee e : employees) {
             names.add(e.getName());
         }
@@ -89,8 +90,8 @@ public class App {
     Реализуйте метод, принимающий в качестве аргумента список сотрудников и минимальный возраст,
     и возвращающий список сотрудников, возраст которых больше либо равен указанному аргументу;
      */
-    public static ArrayList<Employee> minAge(int min, ArrayList<Employee> employees) {
-        ArrayList<Employee> oldEmps = new ArrayList<>();
+    public static List<Employee> minAge(int min, List<Employee> employees) {
+        List<Employee> oldEmps = new ArrayList<>();
         for (Employee e : employees) {
             if (e.getAge() >= min) {
                 oldEmps.add(e);
@@ -103,19 +104,19 @@ public class App {
     Реализуйте метод, принимающий в качестве аргумента список сотрудников и минимальный средний возраст,
     и проверяющий, что средний возраст сотрудников превышает указанный аргумент;
      */
-    public static boolean compareAverageAge(int predictAge, ArrayList<Employee> employees) {
-        int averageAge = 0;
+    public static boolean compareAverageAge(int predictAge, List<Employee> employees) {
+        double averageAge = 0;
         for (Employee e : employees) {
             averageAge += e.getAge();
         }
-        averageAge /= 2;
+        averageAge /= employees.size();
         return averageAge > predictAge;
     }
 
     /*
     Реализуйте метод, принимающий в качестве аргумента список сотрудников, и возвращающий ссылку на самого молодого сотрудника.
      */
-    public static Employee youngestEmp(ArrayList<Employee> employees) {
+    public static Employee youngestEmp(List<Employee> employees) {
         Employee youngest = new Employee("Young", 10000);
         for (Employee e : employees) {
             if (e.getAge() < youngest.getAge()) {
