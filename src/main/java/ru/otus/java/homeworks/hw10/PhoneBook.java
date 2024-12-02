@@ -3,6 +3,7 @@ package ru.otus.java.homeworks.hw10;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /*
     Реализуйте класс PhoneBook, который хранит в себе список имен (фио) и телефонных номеров;
@@ -10,14 +11,14 @@ import java.util.Map;
     тогда при запросе такой фамилии должны выводиться все телефоны;
      */
 public class PhoneBook {
-    private static final HashMap<String, HashSet<Integer>> pb = new HashMap<>();
+    private static final Map<String, Set<Integer>> pb = new HashMap<>();
 
 /*
 Метод containsPhoneNumber должен проверять наличие телефона в справочнике.
  */
 
     public void containsPhoneNumber(Integer number) {
-        for (Map.Entry<String, HashSet<Integer>> entry : pb.entrySet()) {
+        for (Map.Entry<String, Set<Integer>> entry : pb.entrySet()) {
             boolean result = entry.getValue().contains(number);
             if (result) {
                 System.out.println("У " + entry.getKey() + " номер телефона: " + number);
@@ -30,7 +31,7 @@ public class PhoneBook {
     Метод find() выполнять поиск номер(-а, -ов) телефона по имени;
  */
     public void find(String name) {
-        HashSet<Integer> phone = pb.get(name);
+        Set<Integer> phone = pb.get(name);
         System.out.println("У " + name + " номер телефона: " + phone);
     }
     /*
@@ -40,7 +41,7 @@ public class PhoneBook {
         if (pb.containsKey(name)) {
             pb.get(name).add(number);
         } else {
-            HashSet<Integer> phone = new HashSet<>();
+            Set<Integer> phone = new HashSet<>();
             phone.add(number);
             pb.put(name, phone);
         }
@@ -49,10 +50,11 @@ public class PhoneBook {
 
     @Override
     public String toString() {
-        for (Map.Entry<String, HashSet<Integer>> entry : pb.entrySet()) {
-            System.out.println("имя: " + entry.getKey() + ", номер телефона: " + entry.getValue());
+        StringBuilder str = new StringBuilder();
+        for (Map.Entry<String, Set<Integer>> entry : pb.entrySet()) {
+            str.append("имя: ").append(entry.getKey()).append(", номер телефона: ").append(entry.getValue()).append(";\n");
         }
-        return "";
+        return str.toString();
     }
 
 }
