@@ -13,7 +13,6 @@ public class ExampleClient implements AutoCloseable {
 
     public ExampleClient(InputStream inputStream, OutputStream outputStream) {
         this.inputStream = new DataInputStream(inputStream);
-        ;
         this.outputStream = new DataOutputStream(outputStream);
     }
 
