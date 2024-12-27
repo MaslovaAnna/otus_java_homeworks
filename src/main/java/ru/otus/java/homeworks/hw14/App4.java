@@ -10,25 +10,25 @@ public class App4 {
             array[i] = 1.14 * Math.cos(i) * Math.sin(i * 0.2) * Math.cos(i / 1.2);
             Засеките время выполнения цикла и выведите его в консоль.
          */
-        int n = 100_000_000;
-        double[] arrD = new double[n];
+        final int ARRAY_SIZE = 100_000_000;
+        double[] arrD = new double[ARRAY_SIZE];
         Thread createDouble1 = new Thread(() -> {
-            for (int i = 0; i < n/4; i++) {
+            for (int i = 0; i < ARRAY_SIZE/4; i++) {
                 arrD[i] = 1.14 * Math.cos(i) * Math.sin(i * 0.2) * Math.cos(i / 1.2);
             }
         });
         Thread createDouble2 = new Thread(() -> {
-            for (int i = n/4; i < n/2; i++) {
+            for (int i = ARRAY_SIZE/4; i < ARRAY_SIZE/2; i++) {
                 arrD[i] = 1.14 * Math.cos(i) * Math.sin(i * 0.2) * Math.cos(i / 1.2);
             }
         });
         Thread createDouble3 = new Thread(() -> {
-            for (int i = n/2; i < 3*n/4; i++) {
+            for (int i = ARRAY_SIZE/2; i < 3*ARRAY_SIZE/4; i++) {
                 arrD[i] = 1.14 * Math.cos(i) * Math.sin(i * 0.2) * Math.cos(i / 1.2);
             }
         });
         Thread createDouble4 = new Thread(() -> {
-            for (int i = 3*n/4; i < n; i++) {
+            for (int i = 3*ARRAY_SIZE/4; i < ARRAY_SIZE; i++) {
                 arrD[i] = 1.14 * Math.cos(i) * Math.sin(i * 0.2) * Math.cos(i / 1.2);
             }
         });
