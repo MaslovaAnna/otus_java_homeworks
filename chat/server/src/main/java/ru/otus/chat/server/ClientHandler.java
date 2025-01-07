@@ -73,7 +73,7 @@ public class ClientHandler {
                         } else if (startMessage[0].equalsIgnoreCase("/w")) {
                             server.privateMessage(startMessage[1], username + ": " + startMessage[2]);
                         } else if (startMessage[0].equalsIgnoreCase("/kick") && (server.getAuthenticatedProvider()
-                                .checkRole(username))) {
+                                .checkRoleAdmin(username))) {
                             server.kickOut(startMessage[1]);
                         }
                     } else {

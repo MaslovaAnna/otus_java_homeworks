@@ -69,8 +69,9 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         }
         return false;
     }
+
     @Override
-    public boolean checkRole(String username) {
+    public boolean checkRoleAdmin(String username) {
         for (User u : users) {
             if (u.username.equals(username) && u.role.equals("admin")) {
                 return true;
