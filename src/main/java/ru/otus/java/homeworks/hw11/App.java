@@ -12,12 +12,12 @@ public class App {
         for (int i = 0; i < n; i++) {
             array.add((int) (Math.random() * 100));
         }
-        ExampleTree T = new ExampleTree(array);
-        System.out.println(T.getSortedList());
-        T.makeTree();
+        ExampleTree arr = new ExampleTree(array);
+        System.out.println(arr.getSortedList());
+        arr.makeTree();
         Scanner scr = new Scanner(System.in);
         System.out.println("Введите искомое число");
-        System.out.println(T.find(scr.nextInt()));
+        System.out.println(arr.find(scr.nextInt()));
 
     }
 }

@@ -6,11 +6,11 @@ import java.util.List;
 
 public class ExampleTree implements SearchTree<Integer> {
 
-    List<Integer> T;
+    List<Integer> array;
     Tree tree = new Tree();
 
     public ExampleTree(List<Integer> array) {
-        this.T = array;
+        this.array = array;
     }
 
     @Override
@@ -27,20 +27,20 @@ public class ExampleTree implements SearchTree<Integer> {
         boolean needSort;
         do {
             needSort = false;
-            for (int i = 0; i < T.size() - 1; i++) {
-                if (T.get(i) > T.get(i + 1)) {
-                    int temp = T.get(i);
-                    T.set(i, T.get(i + 1));
-                    T.set(i + 1, temp);
+            for (int i = 0; i < array.size() - 1; i++) {
+                if (T.get(i) > array.get(i + 1)) {
+                    int temp = array.get(i);
+                    array.set(i, array.get(i + 1));
+                    array.set(i + 1, temp);
                     needSort = true;
                 }
             }
         } while (needSort);
-        return T;
+        return array;
     }
 
     public void makeTree() {
-        for (int i : T) {
+        for (int i : array) {
             tree.insertNode(i);
         }
     }
