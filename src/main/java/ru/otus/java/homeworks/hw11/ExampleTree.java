@@ -4,7 +4,7 @@ package ru.otus.java.homeworks.hw11;
 import java.util.List;
 
 
-public class ExampleTree implements SearchTree<Integer> {
+public class ExampleTree implements SearchTree {
 
     List<Integer> array;
     Tree tree = new Tree();
@@ -28,7 +28,7 @@ public class ExampleTree implements SearchTree<Integer> {
         do {
             needSort = false;
             for (int i = 0; i < array.size() - 1; i++) {
-                if (T.get(i) > array.get(i + 1)) {
+                if (array.get(i) > array.get(i + 1)) {
                     int temp = array.get(i);
                     array.set(i, array.get(i + 1));
                     array.set(i + 1, temp);
