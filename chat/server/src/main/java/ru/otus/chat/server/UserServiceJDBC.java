@@ -22,9 +22,9 @@ class UserServiceJDBC{
             WHERE r."name" = 'admin' and u.username = ?;
             """;
     private static final String INSERT_QUERY = """
-            INSERT INTO public.users
+            INSERT INTO users
             (id, "password", login, username)
-            VALUES(?, ?, ?, ?))
+            VALUES(?, ?, ?, ?)
             """;
 
     private final Connection connection;
