@@ -3,6 +3,7 @@ package ru.otus.chat.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -11,7 +12,7 @@ public class Server {
     private List<ClientHandler> clients;
     private AuthenticatedProvider authenticatedProvider;
 
-    public Server(int port) {
+    public Server(int port) throws SQLException {
         this.port = port;
         clients = new CopyOnWriteArrayList<>();
         authenticatedProvider = new InMemoryAuthenticatedProvider(this);

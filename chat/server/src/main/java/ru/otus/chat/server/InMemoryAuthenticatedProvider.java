@@ -1,32 +1,17 @@
 package ru.otus.chat.server;
 
+import java.sql.SQLException;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
 
-    private class User {
-        private String login;
-        private String password;
-        private String username;
-        private String role;
-
-        public User(String login, String password, String username, String role) {
-            this.login = login;
-            this.password = password;
-            this.username = username;
-            this.role = role;
-        }
-    }
-
     private List<User> users;
     private Server server;
+    private UserServiceJDBC userServiceJDBC = new UserServiceJDBC();
 
-    public InMemoryAuthenticatedProvider(Server server) {
+    public InMemoryAuthenticatedProvider(Server server) throws SQLException {
         this.server = server;
-        this.users = new CopyOnWriteArrayList<>();
-        users.add(new User("qwe", "qwe", "qwe1", "user"));
-        users.add(new User("admin", "admin", "admin", "admin"));
+        this.users = userServiceJDBC.getAll();
     }
 
     @Override
@@ -36,8 +21,8 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
 
     private String getUsernameByLoginAndPassword(String login, String password) {
         for (User u : users) {
-            if (u.login.equals(login) && u.password.equals(password)) {
-                return u.username;
+            if (u.getLogin().equals(login) && u.getPassword().equals(password)) {
+                return u.getUsername();
             }
         }
         return null;
@@ -63,30 +48,25 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
 
     private boolean isLoginAlreadyExists(String login) {
         for (User u : users) {
-            if (u.login.equals(login)) {
+            if (u.getLogin().equals(login)) {
                 return true;
             }
         }
         return false;
     }
 
-    @Override
-    public boolean checkRoleAdmin(String username) {
-        for (User u : users) {
-            if (u.username.equals(username) && u.role.equals("admin")) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private boolean isUsernameAlreadyExists(String username) {
         for (User u : users) {
-            if (u.username.equals(username)) {
+            if (u.getUsername().equals(username)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean checkRoleAdmin(String username) {
+        return userServiceJDBC.isAdmin(username);
     }
 
     @Override
@@ -103,7 +83,8 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
             clientHandler.sendMsg("Указанное имя пользователя уже занято");
             return false;
         }
-        users.add(new User(login, password, username, "user"));
+        users.add(new User(users.size()+1, username, login, password));
+        userServiceJDBC.addUser(users.size()+1, username, login, password);
         clientHandler.setUsername(username);
         server.subscribe(clientHandler);
         clientHandler.sendMsg("/regok " + username);
