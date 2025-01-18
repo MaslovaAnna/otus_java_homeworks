@@ -1,4 +1,4 @@
-package main.java.ru.otus.java.classworks.cw18;
+package main.java.ru.otus.classworks.cw18;
 
 public class Role {
 
