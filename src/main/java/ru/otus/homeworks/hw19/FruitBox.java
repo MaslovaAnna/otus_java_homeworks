@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FruitBox<T extends Fruit> {
-    private ArrayList<T> fruits;
+    private List<T> fruits;
 
     public FruitBox(T... fruit) {
         this.fruits = new ArrayList<>(List.of(fruit));
