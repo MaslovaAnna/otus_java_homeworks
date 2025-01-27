@@ -6,7 +6,6 @@ import java.util.List;
 public class Massive {
 
     public List<Integer> afterOne(List<Integer> array) {
-        try {
             int lastOne = array.lastIndexOf(1);
             if (lastOne == -1) {
                 throw new RuntimeException("В массиве нет 1");
@@ -16,10 +15,6 @@ public class Massive {
                 temp.add(array.get(i));
             }
             return temp;
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public boolean checkOneOrTwo(List<Integer> array) {

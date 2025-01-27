@@ -31,8 +31,7 @@ class MassiveTest {
                     result.clear();
                 }
             }
-            if (temp.equals(result)) result = null;
-            out.add(Arguments.arguments(result, temp));
+            if (!temp.equals(result)) out.add(Arguments.arguments(result, temp));
         }
         return out.stream();
     }
@@ -64,5 +63,25 @@ class MassiveTest {
         Assertions.assertEquals(result, massive.checkOneOrTwo(array));
     }
 
+    @MethodSource
+    public static Stream<Arguments> testDataAfterOneException() {
+        List<Arguments> out = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            List<Integer> temp = new ArrayList<>();
+            for (int j = 0; j < 10; j++) {
+                int a = (int) (Math.random() * 10);
+                if (a != 1) {
+                    temp.add(a);
+                }
+            }
+            out.add(Arguments.arguments(temp));
+        }
+        return out.stream();
+    }
+    @ParameterizedTest
+    @MethodSource("testDataAfterOneException")
+    public void testAfterOneException(List<Integer> array) {
+        Assertions.assertThrows(RuntimeException.class, () -> massive.afterOne(array), "Должно выброситься исключение при отсутствии 1 в массиве");
+    }
 
 }

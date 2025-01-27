@@ -7,7 +7,7 @@ import java.util.List;
 
 public class App {
     public static void main(String[] args) {
-        Integer[] list = {1, 2, 2, 2, 1, 2};
+        Integer[] list = {10, 2, 2, 2, 10, 2};
         List<Integer> array = new ArrayList<>();
         Collections.addAll(array, list);
         Massive massive = new Massive();
