@@ -28,11 +28,12 @@ public class App {
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
+        int count = read.toString().split(reg).length;
         if (read.indexOf(reg) == 0 && read.lastIndexOf(reg) + 1 == read.length()) {
-            return read.toString().split(reg).length;
+            return count;
         } else if (read.indexOf(reg) == 0) {
-            return read.toString().split(reg).length - 1;
+            return count - 1;
         }
-        return read.toString().split(reg).length;
+        return count;
     }
 }
