@@ -1,5 +1,6 @@
 package main.java.ru.otus.homeworks.hw20;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,10 +21,10 @@ public class App {
 
     public static int countRegs(File file, String reg) {
         StringBuilder read = new StringBuilder();
-        try (FileReader fileReader = new FileReader(file, StandardCharsets.UTF_8)) {
-            int bytesRead;
-            while ((bytesRead = fileReader.read()) != -1) {
-                read.append((char) bytesRead);
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                read.append(line).append(System.lineSeparator());
             }
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
