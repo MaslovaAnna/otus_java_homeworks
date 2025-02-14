@@ -11,11 +11,10 @@ public class ClientThreads {
     private DataInputStream in;
     private DataOutputStream out;
 
-    public ClientThreads(Socket socket) throws IOException {
+    public ClientThreads(Socket socket, Dispatcher dispatcher) throws IOException {
         this.socket = socket;
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
-        Dispatcher dispatcher = new Dispatcher();
             try {
                 System.out.println("Подключился новый клиент");
                 byte[] buffer = new byte[8192];

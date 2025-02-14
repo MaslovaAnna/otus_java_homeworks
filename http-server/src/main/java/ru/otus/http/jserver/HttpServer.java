@@ -8,9 +8,12 @@ import java.util.concurrent.Executors;
 
 public class HttpServer {
     private int port;
+    private Dispatcher dispatcher;
+
 
     public HttpServer(int port) {
         this.port = port;
+        dispatcher = new Dispatcher();
     }
 
     public void start() {
@@ -21,7 +24,7 @@ public class HttpServer {
                 ExecutorService socketsPool = Executors.newCachedThreadPool();
                 socketsPool.execute(() -> {
                     try {
-                        new ClientThreads(socket);
+                        new ClientThreads(socket,dispatcher);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
