@@ -26,6 +26,11 @@ class UserServiceJDBC{
             (id, "password", login, username)
             VALUES(?, ?, ?, ?)
             """;
+    private static final String UPDATE_USERNAME_QUERY = """
+            UPDATE users
+            SET username = ?
+            WHERE login = ?
+            """;
 
     private final Connection connection;
 
@@ -96,6 +101,16 @@ class UserServiceJDBC{
             e.printStackTrace();
         }
 
+    }
+
+    public void changeUsername(String username, String login) {
+        try(PreparedStatement ps = connection.prepareStatement(UPDATE_USERNAME_QUERY)) {
+            ps.setString(1, username);
+            ps.setString(2, login);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 

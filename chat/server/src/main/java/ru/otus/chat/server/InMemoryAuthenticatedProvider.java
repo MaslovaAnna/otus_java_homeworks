@@ -90,4 +90,20 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         clientHandler.sendMsg("/regok " + username);
         return true;
     }
+
+    @Override
+    public boolean changeUsername(ClientHandler clientHandler, String username, String newUsername) {
+        String login = "";
+        if (isUsernameAlreadyExists(newUsername)) {
+            clientHandler.sendMsg("Указанное имя пользователя уже занято");
+            return false;
+        }
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
+                login = u.getLogin();
+            }
+        }
+        userServiceJDBC.changeUsername(username, login);
+        return true;
+    }
 }

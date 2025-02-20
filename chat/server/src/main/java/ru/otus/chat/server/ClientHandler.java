@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.time.LocalDateTime;
 
 
 public class ClientHandler {
@@ -60,6 +61,24 @@ public class ClientHandler {
                                 break;
                             }
                         }
+                        // /changenick NewUsername
+                        if (message.startsWith("/changenick ")) {
+                            String[] element = message.split(" ");
+                            if (element.length != 2){
+                                sendMsg("Неверный формат команды /changenick");
+                                continue;
+                            }
+                            if (server.getAuthenticatedProvider()
+                                    .changeUsername(this, username, element[1])){
+                                break;
+                            }
+                        }
+                        // /online
+                        if (message.startsWith("/online ")) {
+                            server.whoIsOnline(username);
+                                break;
+
+                        }
                     }
                 }
                 //цикл работы
@@ -90,7 +109,7 @@ public class ClientHandler {
 
     public void sendMsg(String message) {
         try {
-            out.writeUTF(message);
+            out.writeUTF(message + LocalDateTime.now());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

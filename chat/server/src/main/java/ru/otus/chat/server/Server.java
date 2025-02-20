@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -48,7 +49,17 @@ public class Server {
             }
         }
     }
-
+    public void whoIsOnline(String user) {
+        List<String> onlineUsers = new ArrayList<>();
+        for (ClientHandler c : clients) {
+            onlineUsers.add(c.getUsername());
+        }
+        for (ClientHandler c : clients) {
+            if (user.equals(c.getUsername())) {
+                c.sendMsg(onlineUsers.toString());
+            }
+        }
+    }
 
     public void broadcastMessage(String message) {
         for (ClientHandler c : clients) {
