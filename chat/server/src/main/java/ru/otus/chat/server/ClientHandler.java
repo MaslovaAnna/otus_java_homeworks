@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class ClientHandler {
@@ -12,104 +14,53 @@ public class ClientHandler {
     private Server server;
     private DataInputStream in;
     private DataOutputStream out;
-
     private String username;
+    private Dispatcher dispatcher;
+    private String room = null;
 
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
+    }
 
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
         this.server = server;
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
+        this.dispatcher = new Dispatcher();
 
         new Thread(() -> {
             try {
                 System.out.println("Клиент подключился на порту: " + socket.getPort());
-                //цикл аутентификации
-                while (true) {
+                LocalTime currentTime = LocalTime.now();
+                if (username == null) {
                     sendMsg("Для начала работы надо пройти аутентификацию. Формат команды /auth login password \n" +
                             "или регистрацию. Формат команды /reg login password username ");
-
-                    String message = in.readUTF();
-                    if (message.startsWith("/")) {
-                        if (message.equalsIgnoreCase("/exit")) {
-                            sendMsg("/exitok");
-                            break;
-                        }
-                        // /auth login password
-                        if (message.startsWith("/auth ")) {
-                            String[] element = message.split(" ");
-                            if (element.length != 3){
-                                sendMsg("Неверный формат команды /auth");
-                                continue;
-                            }
-                            if (server.getAuthenticatedProvider()
-                                    .authenticate(this, element[1], element[2])){
-
-                                break;
-                            }
-                        }
-                        // /reg login password username
-                        if (message.startsWith("/reg ")) {
-                            String[] element = message.split(" ");
-                            if (element.length != 4){
-                                sendMsg("Неверный формат команды /reg");
-                                continue;
-                            }
-                            if (server.getAuthenticatedProvider()
-                                    .registration(this, element[1], element[2], element[3])){
-                                break;
-                            }
-                        }
-                        // /changenick NewUsername
-                        if (message.startsWith("/changenick ")) {
-                            String[] element = message.split(" ");
-                            if (element.length != 2){
-                                sendMsg("Неверный формат команды /changenick");
-                                continue;
-                            }
-                            if (server.getAuthenticatedProvider()
-                                    .changeUsername(this, username, element[1])){
-                                break;
-                            }
-                        }
-                        // /online
-                        if (message.startsWith("/online ")) {
-                            server.whoIsOnline(username);
-                                break;
-
-                        }
-                    }
                 }
-                //цикл работы
-                while (true) {
+                while (true) {//цикл
                     String message = in.readUTF();
-                    String[] startMessage = message.split( " ", 3);
-                    if (message.startsWith("/")) {
-                        if (message.equalsIgnoreCase("/exit")) {
-                            sendMsg("/exitok");
-                            break;
-                        } else if (startMessage[0].equalsIgnoreCase("/w")) {
-                            server.privateMessage(startMessage[1], username + ": " + startMessage[2]);
-                        } else if (startMessage[0].equalsIgnoreCase("/kick") && (server.getAuthenticatedProvider()
-                                .checkRoleAdmin(username))) {
-                            server.kickOut(startMessage[1]);
-                        }
-                    } else {
-                        server.broadcastMessage(username + " : " + message);
+                    if ((currentTime.plusMinutes(10)).isBefore(LocalTime.now())) {
+                        sendMsg("Слишком долгое ожидание активности, вы покинули чат");
+                        disconnect();
+                        break;
                     }
-                }
-            } catch (IOException e) {
+                        currentTime = LocalTime.now();
+                        dispatcher.execute(message, this, server);
+                    }
+
+        } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                disconnect();
             }
         }).start();
     }
 
     public void sendMsg(String message) {
         try {
-            out.writeUTF(message + LocalDateTime.now());
+                out.writeUTF(message);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
