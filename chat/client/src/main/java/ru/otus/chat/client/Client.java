@@ -27,12 +27,40 @@ public class Client {
                             break;
                         }
                         if (message.startsWith("/authok ")) {
-                            System.out.println("Удалось успешно войти в чат с именем пользователя "
+                            System.out.println("Удалось успешно войти в чат с ником "
                                     + message.split(" ")[1]);
                         }
                         if (message.startsWith("/regok ")) {
-                            System.out.println("Удалось успешно зарегистрироваться с именем пользователя "
+                            System.out.println("Удалось успешно зарегистрироваться с ником "
                                     + message.split(" ")[1]);
+                        }
+                        if (message.startsWith("/changenickok ")) {
+                            System.out.println("Удалось успешно сменить ник на "
+                                    + message.split(" ")[1]);
+                        }
+                        if (message.startsWith("/banok ")) {
+                            System.out.println("Заблокирован пользователь "
+                                    + message.split(" ", 2)[1]);
+                        }
+                        if (message.startsWith("/unbanok ")) {
+                            System.out.println("Разблокирован пользователь "
+                                    + message.split(" ")[1]);
+                        }
+                        if (message.startsWith("/createok ")) {
+                            System.out.println("Удалось успешно создать комнату "
+                                    + message.split(" ")[1]);
+                        }
+                        if (message.startsWith("/enterok ")) {
+                                System.out.println("Удалось успешно войти в комнату "
+                                        + message.split(" ")[1]);
+                        }
+                        if (message.startsWith("/deleteok ")) {
+                            System.out.println("Удалось успешно удалить комнату "
+                                    + message.split(" ")[1]);
+                        }
+                        if (message.startsWith("/setroleok ")) {
+                            System.out.println("Успешно пользователю "
+                                    + message.split(" ", 2)[1]);
                         }
                     } else {
                         System.out.println(message);

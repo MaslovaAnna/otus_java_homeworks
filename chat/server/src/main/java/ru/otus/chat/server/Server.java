@@ -28,7 +28,7 @@ public class Server {
         try {
             System.out.println("Сервер запущен на порту: " + port);
             authenticatedProvider.initialize();
-            while (true) {
+            while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
                 new ClientHandler(socket, this);
             }
@@ -69,30 +69,49 @@ public class Server {
         }
     }
 
+
+    public void whoIsInRoom(String user, String roomName) {
+        List<String> onlineRoomUsers = new ArrayList<>();
+        for (ClientHandler c : clients) {
+            if (roomName.equals(c.getRoom())) onlineRoomUsers.add(c.getUsername());
+        }
+            for (ClientHandler c : clients) {
+                if (user.equals(c.getUsername())) c.sendMsg("В комнате " + roomName + " в сети: " + onlineRoomUsers);
+        }
+    }
+
     public void whoIsOnline(String user) {
         List<String> onlineUsers = new ArrayList<>();
         for (ClientHandler c : clients) {
             onlineUsers.add(c.getUsername());
-
         }
         for (ClientHandler c : clients) {
-            if (user.equals(c.getUsername())) {
-                c.sendMsg(String.valueOf(onlineUsers));
+                if (user.equals(c.getUsername())) {
+                    c.sendMsg("В сети: " + onlineUsers);
+                }
             }
-        }
     }
 
-    public void isOnline(String username, String checkUsername) {
+    public void isOnline(String username, String checkUsername, String roomName) {
         List<String> onlineUsers = new ArrayList<>();
         for (ClientHandler c : clients) {
             onlineUsers.add(c.getUsername());
         }
         for (ClientHandler c : clients) {
-            if (username.equals(c.getUsername())) {
-                if (onlineUsers.contains(checkUsername)) {
-                    c.sendMsg(checkUsername + " сейчас в сети");
-                } else
-                    c.sendMsg(checkUsername + " сейчас не в сети");
+            if (!(roomName == null)) {
+                if (username.equals(c.getUsername()) && roomName.equals(c.getRoom())) {
+                    if (onlineUsers.contains(checkUsername)) {
+                        c.sendMsg(checkUsername + " сейчас в комнате " + roomName);
+                    } else
+                        c.sendMsg(checkUsername + " сейчас не в комнате " + roomName);
+                }
+            } else {
+                if (username.equals(c.getUsername())) {
+                    if (onlineUsers.contains(checkUsername)) {
+                        c.sendMsg(checkUsername + " сейчас в сети");
+                    } else
+                        c.sendMsg(checkUsername + " сейчас не в сети");
+                }
             }
         }
     }
@@ -101,7 +120,7 @@ public class Server {
     public void broadcastMessage(String message, String room) {
         for (ClientHandler c : clients) {
             if (c.getRoom().equals(room)) {
-                c.sendMsg(message);
+                c.sendMsg(c.getRoom() + ": " + message);
             }
         }
     }

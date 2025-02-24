@@ -9,9 +9,9 @@ public class OutRoom implements Command{
         String[] startMessage = message.split(" ");
         if (startMessage.length != 1) {
             client.sendMsg("Неверный формат команды /out");
-        } else if (client.getRoom() != null) {
-            client.setRoom(null);
-            server.broadcastMessage("На общий сервер вернулся " + client.getUsername(), null);
+        } else if (!client.getRoom().equals("server")) {
+            client.setRoom("server");
+            server.broadcastMessage("На общий сервер вернулся " + client.getUsername(), "server");
         } else client.sendMsg("Вы не в частной комнате");
     }
 }

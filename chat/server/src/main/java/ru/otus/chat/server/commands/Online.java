@@ -10,7 +10,7 @@ public class Online implements Command {
         if (startMessage.length > 2) {
             client.sendMsg("Неверный формат команды /online");
         } else if (startMessage.length == 2) {
-            server.isOnline(client.getUsername(), startMessage[1]);
+            server.isOnline(client.getUsername(), startMessage[1], null);
         } else server.whoIsOnline(client.getUsername());
     }
 }

@@ -4,9 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 
 public class ClientHandler {
@@ -16,7 +14,7 @@ public class ClientHandler {
     private DataOutputStream out;
     private String username;
     private Dispatcher dispatcher;
-    private String room = null;
+    private String room = "server";
 
     public String getRoom() {
         return room;
@@ -41,7 +39,7 @@ public class ClientHandler {
                     sendMsg("Для начала работы надо пройти аутентификацию. Формат команды /auth login password \n" +
                             "или регистрацию. Формат команды /reg login password username ");
                 }
-                while (true) {//цикл
+                while (!socket.isClosed()) {//цикл
                     String message = in.readUTF();
                     if ((currentTime.plusMinutes(10)).isBefore(LocalTime.now())) {
                         sendMsg("Слишком долгое ожидание активности, вы покинули чат");

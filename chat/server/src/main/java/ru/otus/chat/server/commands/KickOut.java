@@ -15,6 +15,6 @@ public class KickOut implements Command {
                 server.kickOut(startMessage[1]);
                 client.sendMsg("С сервера выгнан " + startMessage[1]);
             }
-        }
+        } else client.sendMsg("Недостаточно прав");
     }
 }

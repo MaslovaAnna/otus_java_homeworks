@@ -1,6 +1,7 @@
 package ru.otus.chat.server;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface AuthenticatedProvider {
     void initialize();
@@ -25,4 +26,10 @@ public interface AuthenticatedProvider {
     boolean createRoom(ClientHandler client, String name, String password);
 
     boolean enterRoom(ClientHandler client,String name, String password);
+    boolean deleteRoom (ClientHandler clientHandler, String name);
+    boolean checkRoomOwner(String username, String roomname);
+    List<String> actualRooms();
+
+    boolean setRole(ClientHandler clientHandler, String userToSet, String role);
+    boolean removeRole (ClientHandler clientHandler, String userToSet, String role);
 }

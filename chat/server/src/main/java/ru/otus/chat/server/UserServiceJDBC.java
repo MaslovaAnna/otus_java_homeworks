@@ -2,7 +2,7 @@ package ru.otus.chat.server;
 
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +10,7 @@ class UserServiceJDBC {
 
     private static final String DATABASE_URL = "jdbc:postgresql://localhost:5435/otus";
     private static final String USERS_QUERY = "select * from users;";
+    private static final String ROLES_QUERY = "select * from roles;";
     private static final String USER_ROLE_QUERY = """
             SELECT r.id, r."name"
             FROM roles r
@@ -19,7 +20,7 @@ class UserServiceJDBC {
     private static final String IS_ADMIN_QUERY = """
             SELECT count(1)
             FROM roles r
-            join user_to_role utr on r.id = utr.role_id 
+            join user_to_role utr on r.id = utr.role_id
             join users u on u.id = utr.user_id
             WHERE r."name" = 'admin' and u.username = ?;
             """;
@@ -46,7 +47,7 @@ class UserServiceJDBC {
     private static final String IS_MANAGER_QUERY = """
             SELECT count(1)
             FROM roles r
-            join user_to_role utr on r.id = utr.role_id 
+            join user_to_role utr on r.id = utr.role_id
             join users u on u.id = utr.user_id
             WHERE r."name" = 'manager' and u.username = ?;
             """;
@@ -72,10 +73,9 @@ class UserServiceJDBC {
             where u.username = ?;
             """;
     private static final String ROOMS_QUERY = """
-            SELECT r.id, u.username, r.name, r."password"
+            SELECT r.id, u.username, r.name, r."password", r.is_deleted
             FROM rooms r
             join users u on u.id = r.owner_id
-            where u.username = ?;
             """;
     private static final String CHECK_ROOMNAME_QUERY = """
             SELECT count(1)
@@ -87,11 +87,48 @@ class UserServiceJDBC {
             (id, owner_id, "password", "name", is_deleted)
             VALUES(?, ?, ?, ?, false);
             """;
+    private static final String DELETE_ROOM_QUERY = """
+            UPDATE rooms
+            SET is_deleted = true
+            WHERE name = ?;
+            """;
+    private static final String SET_ROLE_QUERY = """
+            INSERT INTO user_to_role
+            (user_id, role_id)
+            VALUES(?, ?);
+            """;
+    private static final String CHECK_USER_ROLE_QUERY = """
+            select count(1)
+            FROM user_to_role
+            WHERE user_id = ? and role_id = ?
+            """;
+    private static final String REMOVE_ROLE_QUERY = """
+            DELETE
+            FROM user_to_role
+            WHERE user_id = ? and role_id = ?
+            """;
 
     private final Connection connection;
 
     public UserServiceJDBC() throws SQLException {
         this.connection = DriverManager.getConnection(DATABASE_URL, "admin", "password");
+    }
+
+    public List<Role> getAllRoles() {
+        List<Role> allRoles = new ArrayList<>();
+        try (Statement statement = connection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(ROLES_QUERY)) {
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    Role role = new Role(id, name);
+                    allRoles.add(role);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return allRoles;
     }
 
     public List<User> getAllUsers() {
@@ -293,6 +330,42 @@ class UserServiceJDBC {
         return flag == 1;
     }
 
+    public boolean checkUserRole(int userId, int roleId) {
+        int flag = 0;
+        try (PreparedStatement ps = connection.prepareStatement(CHECK_USER_ROLE_QUERY)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, roleId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    flag = rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flag == 1;
+    }
+
+    public void setRole(int userId, int roleId) {
+        try (PreparedStatement ps = connection.prepareStatement(SET_ROLE_QUERY)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, roleId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeRole(int userId, int roleId) {
+        try (PreparedStatement ps = connection.prepareStatement(REMOVE_ROLE_QUERY)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, roleId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public boolean roomsCount(String owner) {
         int flag = 0;
         try (PreparedStatement ps = connection.prepareStatement(ROOMS_COUNT_QUERY)) {
@@ -308,15 +381,25 @@ class UserServiceJDBC {
         return flag > 5;
     }
 
-    public void addRoom(int id, String name, String password, String owner) {
+    public void addRoom(int id, String name, String password, int ownerId) {
         try (PreparedStatement ps = connection.prepareStatement(INSERT_ROOM_QUERY)) {
             ps.setInt(1, id);
             ps.setString(4, name);
-            ps.setString(2, owner);
+            ps.setInt(2, ownerId);
             ps.setString(3, password);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public void deleteRoom(String name) {
+        try (PreparedStatement ps = connection.prepareStatement(DELETE_ROOM_QUERY)) {
+            ps.setString(1, name);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -2,12 +2,14 @@ package ru.otus.chat.server;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
 
     private List<User> users;
     private List<Room> rooms;
+    private List<Role> roles;
     private Server server;
     private UserServiceJDBC userServiceJDBC = new UserServiceJDBC();
 
@@ -15,6 +17,7 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         this.server = server;
         this.users = userServiceJDBC.getAllUsers();
         this.rooms = userServiceJDBC.getAllRooms();
+        this.roles = userServiceJDBC.getAllRoles();
     }
 
     public List<Room> getRooms() {
@@ -35,19 +38,52 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         return null;
     }
 
-    private boolean checkIsDeletedRoom(String name, String password) {
+    private int getUserIdByUsername(String username) {
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
+                return u.getId();
+            }
+        }
+        return 0;
+    }
+    private int getRoleIdByRoleName(String role) {
+        for (Role r : roles) {
+            if ((r.getName().equals(role))) {
+                return r.getId();
+            }
+        }
+        return 0;
+    }
+
+    private boolean checkIsDeletedRoom(String name) {
         for (Room r : rooms) {
-            if (r.getName().equals(name) && r.getPassword().equals(password)) {
+            if (r.getName().equals(name)) {
                 return r.isDeleted();
             }
         }
         return true;
     }
 
+    public List<String> actualRooms () {
+        List<String> roomNames = new ArrayList<>();
+        for (Room r : rooms) {
+            if (!r.isDeleted()) {
+                roomNames.add(r.getName());
+            }
+        }
+        return roomNames;
+    }
+
     private boolean checkNamePasswordRoom(String name, String password) {
         for (Room r : rooms) {
-            if (r.getName().equals(name) && r.getPassword().equals(password)) {
-                return true;
+            if (r.getName().equals(name)) {
+                if (r.getPassword() == null && password != null) {
+                    return false;
+                } else if (r.getPassword() != null && password == null) {
+                    return false;
+                } else if (r.getPassword() == null && password == null) {
+                    return true;
+                } else return r.getPassword().equals(password);
             }
         }
         return false;
@@ -109,6 +145,12 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
             }
         }
         userServiceJDBC.addUser(maxId + 1, username, login, password);
+        userServiceJDBC.setRole(maxId + 1, 2);
+        User u = new User(maxId + 1, username, login, password);
+        List<Role> roles = new ArrayList<>();
+        roles.add(new Role(2, "user"));
+        u.setRoles(roles);
+        users.add(u);
         clientHandler.setUsername(username);
         server.subscribe(clientHandler);
         clientHandler.sendMsg("/regok " + username);
@@ -126,10 +168,11 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
             if (u.getUsername().equals(clientHandler.getUsername())) {
                 login = u.getLogin();
                 clientHandler.setUsername(newUsername);
+                u.setUsername(newUsername);
             }
         }
         userServiceJDBC.changeUsername(newUsername, login);
-        clientHandler.sendMsg("/changenick " + newUsername);
+        clientHandler.sendMsg("/changenickok " + newUsername);
         return true;
     }
 
@@ -140,7 +183,6 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
     public LocalDateTime checkBanTime(String username) {
         for (User u : users) {
             if (u.getUsername().equals(username)) {
-                System.out.println("ban " +u.getBanTime());
                 return u.getBanTime();
             }
         }
@@ -159,20 +201,23 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
     public boolean setBan(ClientHandler clientHandler, String username, int time) {
         for (User u : users) {
             if (u.getUsername().equals(username)) {
-                if (time == -1) {
+                if (time == -1 && checkRoleAdmin(clientHandler.getUsername())) {
                     u.setPermBan(true);
                     userServiceJDBC.setPermBan(username);
                     clientHandler.sendMsg("/banok " + username + " навсегда");
                     return true;
-                } else if (time >= 0){
+                } else if (time >= 0 && checkRoleManager(clientHandler.getUsername()) && checkRoleManager(username)) {
                     u.setBanTime(LocalDateTime.now().plusMinutes(time));
                     userServiceJDBC.setBanTime(username, LocalDateTime.now().plusMinutes(time));
                     clientHandler.sendMsg("/banok " + username + " на (мин)" + time);
                     return true;
-                } else return false;
-
+                } else {
+                    clientHandler.sendMsg("Недостаточно прав");
+                    return false;
+                }
             }
         }
+        clientHandler.sendMsg("Пользователь не найден");
         return false;
     }
     public boolean unBan(ClientHandler clientHandler, String username) {
@@ -185,6 +230,7 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
                 return true;
             }
         }
+        clientHandler.sendMsg("Пользователь не найден");
         return false;
     }
 
@@ -193,7 +239,7 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
             clientHandler.sendMsg("Название комнаты 3+ символа");
             return false;
         }
-        if (isRoomNameAlreadyExists(name)) {
+        if (isRoomNameAlreadyExists(name)&&!checkIsDeletedRoom(name)) {
             clientHandler.sendMsg("Указанный логин уже занят");
             return false;
         }
@@ -201,13 +247,22 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
             clientHandler.sendMsg("Достигнуто предельное количество комнат на пользователя");
             return false;
         }
-        int maxId = 0;
+        int maxRoomId = 0;
         for (Room r : rooms) {
-            if (r.getId() > maxId) {
-                maxId = r.getId();
+            if (r.getId() > maxRoomId) {
+                maxRoomId = r.getId();
             }
         }
-        userServiceJDBC.addRoom(maxId + 1, name, password, clientHandler.getUsername());
+        int ownerId = 0;
+        User owner = null;
+        for (User u: users) {
+            if (u.getUsername().equals(clientHandler.getUsername())) {
+                ownerId = u.getId();
+                owner = u;
+            }
+        }
+        userServiceJDBC.addRoom(maxRoomId + 1, name, password, ownerId);
+        rooms.add(new Room( name,maxRoomId + 1, password, owner));
         clientHandler.sendMsg("/createok " + name);
         return true;
     }
@@ -217,8 +272,8 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
     }
 
     public boolean enterRoom(ClientHandler clientHandler, String name, String password) {
-        if (checkIsDeletedRoom(name, password)) {
-            clientHandler.sendMsg("Комната удалена");
+        if (checkIsDeletedRoom(name)) {
+            clientHandler.sendMsg("Комната удалена или не существует");
             return false;
         } else if (!checkNamePasswordRoom(name, password)) {
             clientHandler.sendMsg("Неверный название/пароль");
@@ -229,6 +284,92 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         return true;
     }
 
+    public boolean checkRoomOwner(String username, String roomname) {
+        for (Room r :rooms) {
+            if (r.getName().equals(roomname)) {
+                return r.getOwner().getUsername().equals(username);
+            }
+        }
+        return false;
+    }
 
+    public boolean deleteRoom (ClientHandler clientHandler, String name) {
+        if (checkIsDeletedRoom(name)) {
+            clientHandler.sendMsg("Комната уже удалена или не существует");
+            return false;
+        }
+            if (checkRoomOwner(clientHandler.getUsername(), name) || checkRoleManager(clientHandler.getUsername())) {
+                userServiceJDBC.deleteRoom(name);
+                for (Room r: rooms) {
+                    if (r.getName().equals(name)) {
+                        r.setDeleted(true);
+                    }
+                }
+                clientHandler.sendMsg("/deleteok " + name);
+                return true;
+            } else clientHandler.sendMsg("Недостаточно прав");
+            return false;
+        }
 
+    private boolean checkUserRole (int userId, int roleId) {
+        return userServiceJDBC.checkUserRole(userId, roleId);
+    }
+    public boolean setRole (ClientHandler clientHandler, String userToSet, String role) {
+        int userId = getUserIdByUsername(userToSet);
+        int roleId = getRoleIdByRoleName(role);
+        if (getRoleIdByRoleName(role) != 0 && getUserIdByUsername(userToSet) != 0) {
+            if (checkRoleAdmin(clientHandler.getUsername())) {
+                if (!checkUserRole(userId, roleId)) {
+                    userServiceJDBC.setRole(userId, roleId);
+                    for (User u: users) {
+                        if (u.getId() == userId) {
+                            List<Role> newroles = u.getRoles();
+                            newroles.add(new Role(roleId, role));
+                            u.setRoles(newroles);
+                            clientHandler.sendMsg("/setroleok " + userToSet + " назначена роль: " + role);
+                            return true;
+                        }
+                    }
+                } else {
+                    clientHandler.sendMsg("Указанная роль уже назначена");
+                    return false;
+                }
+            } else {
+                clientHandler.sendMsg("Недостаточно прав");
+                return false;
+            }
+        }
+        clientHandler.sendMsg("Неправильные ник/роль");
+        return false;
+    }
+
+    public boolean removeRole (ClientHandler clientHandler, String userToSet, String role) {
+        int userId = getUserIdByUsername(userToSet);
+        int roleId = getRoleIdByRoleName(role);
+        if (getRoleIdByRoleName(role) != 0 && getUserIdByUsername(userToSet) != 0) {
+            if (checkRoleAdmin(clientHandler.getUsername())) {
+                if (checkUserRole(userId, roleId)) {
+                    userServiceJDBC.removeRole(userId, roleId);
+                    for (User u: users) {
+                        if (u.getId() == userId) {
+                            List<Role> newroles = u.getRoles();
+                            newroles.remove(new Role(roleId, role));
+                            u.setRoles(newroles);
+                            clientHandler.sendMsg("/removeroleok " + userToSet + " убрана роль: " + role);
+                            return true;
+                        }
+                    }
+                } else {
+                    clientHandler.sendMsg("Указанная роль еще не назначена");
+                    return false;
+                }
+            } else {
+                clientHandler.sendMsg("Недостаточно прав");
+                return false;
+            }
+        }
+        clientHandler.sendMsg("Неправильные ник/роль");
+        return false;
+    }
 }
+
