@@ -12,7 +12,7 @@ public class DeleteRoom implements Command{
                     "для в частную комнату введите: /delete roomname\n");
         } else {
             server.getAuthenticatedProvider()
-                    .deleteRoom(client, element[1]);
+                    .deleteRoom(client, element[1], false);
             if (client.getRoom().equals(element[1])) client.setRoom("server");
         }
         }

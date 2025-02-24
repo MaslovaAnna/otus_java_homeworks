@@ -313,23 +313,40 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         return false;
     }
 
-    public boolean deleteRoom (ClientHandler clientHandler, String name) {
+    public boolean deleteRoom (ClientHandler clientHandler, String name, boolean autoDelete) {
         if (checkIsDeletedRoom(name)) {
             clientHandler.sendMsg("Комната уже удалена или не существует");
             return false;
         }
+        if (!autoDelete) {
             if (checkRoomOwner(clientHandler.getUsername(), name) || checkRoleManager(clientHandler.getUsername())) {
-                userServiceJDBC.deleteRoom(name);
-                for (Room r: rooms) {
+                for (User u : users) {
+                    if (userServiceJDBC.checkUserRoom(u.getId(),getRoomIdByRoomName(name))) userServiceJDBC.outRoom(u.getId(),getRoomIdByRoomName(name));
+                }
+                for (Room r : rooms) {
                     if (r.getName().equals(name)) {
                         r.setDeleted(true);
                     }
                 }
+                userServiceJDBC.deleteRoom(name);
                 server.broadcastMessage("Удалена комната " + name, "server");
                 return true;
             } else clientHandler.sendMsg("Недостаточно прав");
             return false;
+        } else {
+            for (Room r : rooms) {
+                if (r.getName().equals(name)) {
+                    r.setDeleted(true);
+                }
+            }
+            for (User u : users) {
+                if (userServiceJDBC.checkUserRoom(u.getId(),getRoomIdByRoomName(name))) userServiceJDBC.outRoom(u.getId(),getRoomIdByRoomName(name));
+            }
+            userServiceJDBC.deleteRoom(name);
+            server.broadcastMessage("Удалена комната " + name, "server");
+            return true;
         }
+    }
 
     private boolean checkUserRole (int userId, int roleId) {
         return userServiceJDBC.checkUserRole(userId, roleId);
@@ -395,11 +412,14 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
     public void updateRoomsActivity(ClientHandler clientHandler) {
         for (Room r : rooms) {
             if (r.getLastActivivtyTime().plusMinutes(5).isBefore(LocalDateTime.now())) {
-                deleteRoom(clientHandler, r.getName());
+                deleteRoom(clientHandler, r.getName(),true);
             } else if (r.getName().equals(clientHandler.getRoom())) {
                 r.setLastActivivtyTime(LocalDateTime.now());
             }
         }
+    }
+    public boolean checkRoom(ClientHandler client, String room) {
+        return userServiceJDBC.checkUserRoom(getUserIdByUsername(client.getUsername()),getRoomIdByRoomName(room));
     }
 }
 

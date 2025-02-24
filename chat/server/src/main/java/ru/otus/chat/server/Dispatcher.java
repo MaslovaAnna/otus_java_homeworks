@@ -51,7 +51,12 @@ public class Dispatcher {
                     client.sendMsg("Неверный формат команды /");
                 } else router.get(com).execute(message, client, server);
             } else if (!message.isEmpty()) {
-                server.broadcastMessage(LocalDateTime.now().format(formatter) + " " + client.getUsername() + " : " + message, client.getRoom());
+                if (server.getAuthenticatedProvider().checkRoom(client, client.getRoom())) {
+                    server.broadcastMessage(LocalDateTime.now().format(formatter) + " " + client.getUsername() + " : " + message, client.getRoom());
+                } else {
+                    client.sendMsg("Комната удалена");
+                    server.getAuthenticatedProvider().outRoom(client);
+                }
             } else client.sendMsg("Вы ничего не написали");
         }
     }

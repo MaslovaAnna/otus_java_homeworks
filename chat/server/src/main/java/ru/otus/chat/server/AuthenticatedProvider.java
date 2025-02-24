@@ -26,7 +26,7 @@ public interface AuthenticatedProvider {
     boolean createRoom(ClientHandler client, String name, String password);
 
     boolean enterRoom(ClientHandler client,String name, String password);
-    boolean deleteRoom (ClientHandler clientHandler, String name);
+    boolean deleteRoom (ClientHandler clientHandler, String name, boolean autoDelete);
     boolean checkRoomOwner(String username, String roomname);
     List<String> actualRooms();
 
@@ -35,4 +35,6 @@ public interface AuthenticatedProvider {
 
     void updateRoomsActivity(ClientHandler clientHandler);
     void outRoom(ClientHandler clientHandler);
+
+    boolean checkRoom(ClientHandler client, String room);
 }

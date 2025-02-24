@@ -439,7 +439,7 @@ class UserServiceJDBC {
 
     public boolean checkUserRoom(int userId, int roomId) {
         int flag = 0;
-        try (PreparedStatement ps = connection.prepareStatement(CHECK_USER_ROLE_QUERY)) {
+        try (PreparedStatement ps = connection.prepareStatement(CHECK_USER_ROOM_QUERY)) {
             ps.setInt(1, userId);
             ps.setInt(2, roomId);
             try (ResultSet rs = ps.executeQuery()) {
