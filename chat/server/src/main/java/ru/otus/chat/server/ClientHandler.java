@@ -41,7 +41,7 @@ public class ClientHandler {
                 }
                 while (!socket.isClosed()) {//цикл
                     String message = in.readUTF();
-                    if ((currentTime.plusMinutes(10)).isBefore(LocalTime.now())) {
+                    if ((currentTime.plusMinutes(20)).isBefore(LocalTime.now())) {
                         sendMsg("Слишком долгое ожидание активности, вы покинули чат");
                         disconnect();
                         break;

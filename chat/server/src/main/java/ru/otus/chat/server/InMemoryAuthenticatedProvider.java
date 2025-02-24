@@ -411,7 +411,7 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
 
     public void updateRoomsActivity(ClientHandler clientHandler) {
         for (Room r : rooms) {
-            if (r.getLastActivivtyTime().plusMinutes(5).isBefore(LocalDateTime.now())) {
+            if (r.getLastActivivtyTime().plusDays(7).isBefore(LocalDateTime.now())) {
                 deleteRoom(clientHandler, r.getName(),true);
             } else if (r.getName().equals(clientHandler.getRoom())) {
                 r.setLastActivivtyTime(LocalDateTime.now());
