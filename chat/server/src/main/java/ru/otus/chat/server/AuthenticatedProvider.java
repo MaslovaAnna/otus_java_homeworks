@@ -32,4 +32,7 @@ public interface AuthenticatedProvider {
 
     boolean setRole(ClientHandler clientHandler, String userToSet, String role);
     boolean removeRole (ClientHandler clientHandler, String userToSet, String role);
+
+    void updateRoomsActivity(ClientHandler clientHandler);
+    void outRoom(ClientHandler clientHandler);
 }

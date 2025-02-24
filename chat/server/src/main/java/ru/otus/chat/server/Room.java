@@ -9,6 +9,7 @@ public class Room {
     private String name;
     private String password;
     private boolean isDeleted = false;
+    private LocalDateTime lastActivivtyTime;
 
     private User owner;
 
@@ -17,6 +18,15 @@ public class Room {
         this.id = id;
         this.password = password;
         this.owner = owner;
+        this.lastActivivtyTime = LocalDateTime.now();
+    }
+
+    public LocalDateTime getLastActivivtyTime() {
+        return lastActivivtyTime;
+    }
+
+    public void setLastActivivtyTime(LocalDateTime lastActivivtyTime) {
+        this.lastActivivtyTime = lastActivivtyTime;
     }
 
     public int getId() {

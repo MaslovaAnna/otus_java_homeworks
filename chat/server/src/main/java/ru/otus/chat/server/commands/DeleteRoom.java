@@ -8,7 +8,8 @@ public class DeleteRoom implements Command{
     public void execute(String message, ClientHandler client, Server server) {
         String[] element = message.split(" ");
         if (element.length > 2) {
-            client.sendMsg("Неверный формат команды /enter");
+            client.sendMsg("Неверный формат команды /delete \n" +
+                    "для в частную комнату введите: /delete roomname\n");
         } else {
             server.getAuthenticatedProvider()
                     .deleteRoom(client, element[1]);

@@ -107,6 +107,21 @@ class UserServiceJDBC {
             FROM user_to_role
             WHERE user_id = ? and role_id = ?
             """;
+    private static final String ENTER_ROOM_QUERY = """
+            INSERT INTO user_to_room
+            (user_id, room_id)
+            VALUES(?, ?);
+            """;
+    private static final String OUT_ROOM_QUERY = """
+            DELETE
+            FROM user_to_role
+            WHERE user_id = ? and room_id = ?
+            """;
+    private static final String CHECK_USER_ROOM_QUERY = """
+            select count(1)
+            FROM user_to_room
+            WHERE user_id = ? and room_id = ?
+            """;
 
     private final Connection connection;
 
@@ -402,4 +417,39 @@ class UserServiceJDBC {
         }
     }
 
+    public void enterRoom(int userId, int roomId) {
+        try (PreparedStatement ps = connection.prepareStatement(ENTER_ROOM_QUERY)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, roomId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void outRoom(int userId, int roomId) {
+        try (PreparedStatement ps = connection.prepareStatement(OUT_ROOM_QUERY)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, roomId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean checkUserRoom(int userId, int roomId) {
+        int flag = 0;
+        try (PreparedStatement ps = connection.prepareStatement(CHECK_USER_ROLE_QUERY)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, roomId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    flag = rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flag == 1;
+    }
 }

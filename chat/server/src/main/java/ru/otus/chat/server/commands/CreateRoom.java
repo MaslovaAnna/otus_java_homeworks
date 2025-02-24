@@ -9,7 +9,7 @@ public class CreateRoom implements Command{
         String[] element = message.split(" ");
         if (element.length < 2 || element.length >= 4) {
             client.sendMsg("Неверный формат команды /create \n" +
-                    "Для создания комнаты введите /create name password, если пароля не будет оставьте только name");
+                    "Для создания комнаты введите /create name password(при наличии)");
         } else {
             if (element.length == 2) {
                 server.getAuthenticatedProvider()

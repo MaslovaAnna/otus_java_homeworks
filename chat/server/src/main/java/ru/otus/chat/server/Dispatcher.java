@@ -45,6 +45,7 @@ public class Dispatcher {
                                 "или регистрацию. Формат команды /reg login password username");
             } else router.get(com).execute(message, client, server);
         } else {
+            server.getAuthenticatedProvider().updateRoomsActivity(client);
             if (com.startsWith("/")) {
                 if (!router.containsKey(com)) {
                     client.sendMsg("Неверный формат команды /");
