@@ -21,6 +21,8 @@ public class Dispatcher {
         this.router.put("GET /welcome", new WelcomeProcessor());
         this.router.put("GET /products", new GetProductsProcessor(productsService));
         this.router.put("POST /products", new CreateProductProcessor(productsService));
+        this.router.put("DELETE /products", new DeleteProductsProcessor(productsService));
+        this.router.put("PUT /products", new UpdateProductProcessor(productsService));
         this.default400Processor = new Default400Processor();
         this.default404Processor = new Default404Processor();
         this.default500Processor = new Default500Processor();

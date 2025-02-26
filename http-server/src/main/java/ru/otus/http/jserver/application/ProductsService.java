@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class ProductsService {
     private List<Product> products;
@@ -27,5 +28,36 @@ public class ProductsService {
     public void createNewProduct(Product product) {
         Long newId = products.stream().mapToLong(Product::getId).max().getAsLong() + 1;
         products.add(new Product(newId, product.getTitle()));
+    }
+    public boolean deleteProductById(Long id) {
+        int index = getIndexOfProductById(id);
+        if(index != -1) {
+            products.removeIf(p -> p.getId().equals(id));
+            return true;
+        }
+        return false;
+    }
+
+    public void deleteAllProducts() {
+        products.clear();
+    }
+
+    public boolean updateProductById(Product product) {
+        Long id = product.getId();
+        int index = getIndexOfProductById(id);
+        if(index != -1) {
+            products.set(index, product);
+            return true;
+        }
+        return false;
+    }
+
+    public int getIndexOfProductById(Long id) {
+        int index = IntStream.range(0, products.size())
+                .filter(i -> products.get(i).getId().equals(id))
+                .findFirst()
+                .orElse(-1);
+
+        return index;
     }
 }

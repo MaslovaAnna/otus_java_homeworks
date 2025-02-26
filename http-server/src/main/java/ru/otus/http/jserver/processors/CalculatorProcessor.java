@@ -27,7 +27,7 @@ public class CalculatorProcessor implements RequestProcessor {
         int b = Integer.parseInt(request.getParameter("b"));
         String result = a + " + " + b + " = " + (a + b);
 
-        String response =
+        String response = "" +
                 "HTTP/1.1 200 OK\r\n" +
                 "Content-Type: text/html\r\n" +
                 "\r\n" +

@@ -13,14 +13,14 @@ public class HttpServer {
 
     public HttpServer(int port) {
         this.port = port;
-        dispatcher = new Dispatcher();
+        this.dispatcher = new Dispatcher();
     }
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Сервер запущен на порту: " + port);
             while (!serverSocket.isClosed()) {
-            Socket socket = serverSocket.accept();
+                Socket socket = serverSocket.accept();
                 ExecutorService socketsPool = Executors.newCachedThreadPool();
                 socketsPool.execute(() -> {
                     try {
@@ -30,10 +30,10 @@ public class HttpServer {
                     }
                 });
             }
-            
-        } catch (IOException e) {
-                e.printStackTrace();
 
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
     }
 }

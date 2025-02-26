@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 public class Default500Processor implements RequestProcessor {
     @Override
     public void execute(HttpRequest request, OutputStream output) throws IOException {
-        String response =
+        String response = "" +
                 "HTTP/1.1 500 Internal Server Error\r\n" +
                 "Content-Type: text/html\r\n" +
                 "\r\n" +

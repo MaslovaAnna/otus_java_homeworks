@@ -2,18 +2,17 @@ package ru.otus.http.jserver.processors;
 
 import com.google.gson.Gson;
 import ru.otus.http.jserver.HttpRequest;
-import ru.otus.http.jserver.application.Product;
 import ru.otus.http.jserver.application.ProductsService;
+import ru.otus.http.jserver.application.ResponseBody;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
-public class GetProductsProcessor implements RequestProcessor {
+public class DeleteProductsProcessor implements RequestProcessor {
     private ProductsService productsService;
-
-    public GetProductsProcessor(ProductsService productsService) {
+    private ResponseBody responseBody;
+    public DeleteProductsProcessor(ProductsService productsService) {
         this.productsService = productsService;
     }
 
@@ -23,11 +22,16 @@ public class GetProductsProcessor implements RequestProcessor {
         Gson gson = new Gson();
         if (request.containsParameter("id")) {
             Long id = Long.parseLong(request.getParameter("id"));
-            Product product = productsService.getProductById(id);
-            jsonResult = gson.toJson(product);
+            if(productsService.deleteProductById(id)) {
+                responseBody = new ResponseBody("Продукт успешно удален");
+            } else {
+                responseBody = new ResponseBody("Продукт c данным id не найден");
+            }
+            jsonResult = gson.toJson(responseBody);
         } else {
-            List<Product> products = productsService.getAllProducts();
-            jsonResult = gson.toJson(products);
+            productsService.deleteAllProducts();
+            responseBody = new ResponseBody("Все товары успешно удалены");
+            jsonResult = gson.toJson(responseBody);
         }
         String response = "" +
                           "HTTP/1.1 200 OK\r\n" +

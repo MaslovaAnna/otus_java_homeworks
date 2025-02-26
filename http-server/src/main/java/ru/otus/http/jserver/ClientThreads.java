@@ -15,19 +15,19 @@ public class ClientThreads {
         this.socket = socket;
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
-            try {
-                System.out.println("Подключился новый клиент");
-                byte[] buffer = new byte[8192];
-                int n = socket.getInputStream().read(buffer);
-                HttpRequest request = new HttpRequest(new String(buffer, 0, n));
-                request.info(true);
-                dispatcher.execute(request, socket.getOutputStream());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        try {
+            System.out.println("Подключился новый клиент");
+            byte[] buffer = new byte[8192];
+            int n = socket.getInputStream().read(buffer);
+            HttpRequest request = new HttpRequest(new String(buffer, 0, n));
+            request.info(true);
+            dispatcher.execute(request, socket.getOutputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-            finally {
-                disconnect();
-            }
+        finally {
+            disconnect();
+        }
 
     }
     public void disconnect() {

@@ -18,7 +18,7 @@ public class Default400Processor implements RequestProcessor {
         );
         Gson gson = new Gson();
         String jsonError = gson.toJson(errorDto);
-        String response =
+        String response = "" +
                 "HTTP/1.1 400 Bad Request\r\n" +
                 "Content-Type: application/json\r\n" +
                 "\r\n" +
