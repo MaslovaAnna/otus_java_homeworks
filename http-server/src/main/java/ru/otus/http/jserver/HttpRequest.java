@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
+
     private String rawRequest;
     private HttpMethod method;
     private String uri;
@@ -27,6 +28,10 @@ public class HttpRequest {
 
     public String getRoutingKey() {
         return method + " " + uri; // 'GET /items', 'POST /items'
+    }
+
+    public String getUri() {
+        return uri;
     }
 
     public HttpRequest(String rawRequest) {
@@ -67,8 +72,7 @@ public class HttpRequest {
                             headers.put(keyValue[0], keyValue[1]);
                         }
                 );
-        // \r\n
-        this.body = rawRequest.substring(rawRequest.indexOf("\r\n\r\n") + 4);
+        this.body = rawRequest.substring(rawRequest.indexOf("\r\n\r\n") + 4, rawRequest.length());
     }
 
     public void info(boolean showRawRequest) {
@@ -80,4 +84,5 @@ public class HttpRequest {
             System.out.println(rawRequest);
         }
     }
+
 }
