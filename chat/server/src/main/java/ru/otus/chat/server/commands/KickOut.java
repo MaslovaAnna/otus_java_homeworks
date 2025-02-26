@@ -11,7 +11,7 @@ public class KickOut implements Command {
                 .checkRoleAdmin(client.getUsername()))) {
             if (startMessage.length != 2) {
                 client.sendMsg("Неверный формат команды /kick \n" +
-                        "для того чтобы выгнать пользователя с сервера введите: /kick username");
+                               "для того чтобы выгнать пользователя с сервера введите: /kick username");
             } else {
                 server.kickOut(startMessage[1]);
                 client.sendMsg("С сервера выгнан " + startMessage[1]);

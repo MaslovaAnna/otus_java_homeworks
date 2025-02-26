@@ -14,25 +14,36 @@ public class Server {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private int port;
     private List<ClientHandler> clients;
-    private AuthenticatedProvider authenticatedProvider;
+    private AuthenticaterService authenticaterService;
+    private AdministrationService administrationService;
+
+    private RoomService roomService;
     private ServerSocket serverSocket;
+    private List<String> onlineUsers;
+
 
     public Server(int port) throws SQLException, IOException {
         this.port = port;
         clients = new CopyOnWriteArrayList<>();
-        authenticatedProvider = new InMemoryAuthenticatedProvider(this);
+        authenticaterService = new AuthenticaterService(this);
+        roomService = new RoomService(this);
+        administrationService = new AdministrationService(this);
+
         serverSocket = new ServerSocket(port);
+        onlineUsers = new CopyOnWriteArrayList<>();
     }
 
     public void start() {
         try {
             System.out.println("Сервер запущен на порту: " + port);
-            authenticatedProvider.initialize();
+            authenticaterService.initialize();
+            administrationService.initialize();
+            roomService.initialize();
+
             while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
                 new ClientHandler(socket, this);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,10 +53,12 @@ public class Server {
 
         broadcastMessage(LocalDateTime.now().format(formatter) + " " + "В чат вошел: " + clientHandler.getUsername(), clientHandler.getRoom());
         clients.add(clientHandler);
+        onlineUsers.add(clientHandler.getUsername());
     }
 
     public void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler);
+        onlineUsers.remove(clientHandler.getUsername());
         broadcastMessage(LocalDateTime.now().format(formatter) + " " + "Из чата вышел: " + clientHandler.getUsername(), clientHandler.getRoom());
     }
 
@@ -53,6 +66,7 @@ public class Server {
         for (ClientHandler c : clients) {
             if (c.getUsername().equals(username)) {
                 c.disconnect();
+                return;
             }
         }
     }
@@ -75,8 +89,8 @@ public class Server {
         for (ClientHandler c : clients) {
             if (roomName.equals(c.getRoom())) onlineRoomUsers.add(c.getUsername());
         }
-            for (ClientHandler c : clients) {
-                if (user.equals(c.getUsername())) c.sendMsg("В комнате " + roomName + " в сети: " + onlineRoomUsers);
+        for (ClientHandler c : clients) {
+            if (user.equals(c.getUsername())) c.sendMsg("В комнате " + roomName + " в сети: " + onlineRoomUsers);
         }
     }
 
@@ -86,10 +100,10 @@ public class Server {
             onlineUsers.add(c.getUsername());
         }
         for (ClientHandler c : clients) {
-                if (user.equals(c.getUsername())) {
-                    c.sendMsg("В сети: " + onlineUsers);
-                }
+            if (user.equals(c.getUsername())) {
+                c.sendMsg("В сети: " + onlineUsers);
             }
+        }
     }
 
     public void isOnline(String username, String checkUsername, String roomName) {
@@ -134,8 +148,16 @@ public class Server {
         return false;
     }
 
-    public AuthenticatedProvider getAuthenticatedProvider() {
-        return authenticatedProvider;
+    public AuthenticaterService getAuthenticatedProvider() {
+        return authenticaterService;
+    }
+
+    public RoomService getRoomService() {
+        return roomService;
+    }
+
+    public AdministrationService getAdministrationService() {
+        return administrationService;
     }
 
     public void privateMessage(String user, String message) {

@@ -51,8 +51,8 @@ public class Client {
                                     + message.split(" ")[1]);
                         }
                         if (message.startsWith("/enterok ")) {
-                                System.out.println("Удалось успешно войти в комнату "
-                                        + message.split(" ")[1]);
+                            System.out.println("Удалось успешно войти в комнату "
+                                    + message.split(" ")[1]);
                         }
                         if (message.startsWith("/deleteok ")) {
                             System.out.println("Удалось успешно удалить комнату "
