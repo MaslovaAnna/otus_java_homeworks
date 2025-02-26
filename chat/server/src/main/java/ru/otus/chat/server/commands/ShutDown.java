@@ -9,9 +9,9 @@ public class ShutDown implements Command {
     public void execute(String message, ClientHandler client, Server server) {
         if ((server.getAuthenticatedProvider()
                 .checkRoleAdmin(client.getUsername()))) {
-                client.sendMsg("Неверный формат команды /shutdown");
-                server.broadcastMessage("Сервер закрыт", null);
-                server.shutDown();
+            client.sendMsg("Неверный формат команды /shutdown");
+            server.broadcastMessage("Сервер закрыт", null);
+            server.shutDown();
         }
     }
 }

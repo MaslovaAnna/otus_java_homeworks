@@ -33,7 +33,7 @@ public class Dispatcher {
         this.router.put("/out", new OutRoom());
         this.router.put("/delete", new DeleteRoom());
         this.router.put("/com", (message, client, server) -> client.sendMsg(String.valueOf(router.keySet())));
-        this.router.put("/rooms", (message, client, server) -> client.sendMsg(String.valueOf(server.getAuthenticatedProvider().actualRooms())));
+        this.router.put("/rooms", (message, client, server) -> client.sendMsg(String.valueOf(server.getRoomService().actualRooms())));
     }
 
     void execute(String message, ClientHandler client, Server server) throws IOException {
@@ -41,23 +41,31 @@ public class Dispatcher {
         if (client.getUsername() == null) {
             if (!router.containsKey(com)) {
                 client.sendMsg("Неверный формат команды / \n" +
-                                "Для начала работы надо пройти аутентификацию. Формат команды /auth login password \n" +
-                                "или регистрацию. Формат команды /reg login password username");
-            } else router.get(com).execute(message, client, server);
-        } else {
-            server.getAuthenticatedProvider().updateRoomsActivity(client);
-            if (com.startsWith("/")) {
-                if (!router.containsKey(com)) {
-                    client.sendMsg("Неверный формат команды /");
-                } else router.get(com).execute(message, client, server);
-            } else if (!message.isEmpty()) {
-                if (server.getAuthenticatedProvider().checkRoom(client, client.getRoom())) {
-                    server.broadcastMessage(LocalDateTime.now().format(formatter) + " " + client.getUsername() + " : " + message, client.getRoom());
-                } else {
-                    client.sendMsg("Комната удалена");
-                    server.getAuthenticatedProvider().outRoom(client);
-                }
-            } else client.sendMsg("Вы ничего не написали");
+                               "Для начала работы надо пройти аутентификацию. Формат команды /auth login password \n" +
+                               "или регистрацию. Формат команды /reg login password username");
+                return;
+            }
+            router.get(com).execute(message, client, server);
+            return;
         }
+        server.getRoomService().updateRoomsActivity(client);
+        if (com.startsWith("/")) {
+            if (!router.containsKey(com)) {
+                client.sendMsg("Неверный формат команды /");
+                return;
+            }
+            router.get(com).execute(message, client, server);
+            return;
+        } else if (!message.isEmpty()) {
+            if (server.getRoomService().checkRoom(client, client.getRoom())) {
+                server.broadcastMessage(LocalDateTime.now().format(formatter) + " " + client.getUsername() + " : " + message, client.getRoom());
+                return;
+            }
+            client.sendMsg("Комната удалена");
+            server.getRoomService().outRoom(client);
+            return;
+        }
+        client.sendMsg("Вы ничего не написали");
+
     }
 }

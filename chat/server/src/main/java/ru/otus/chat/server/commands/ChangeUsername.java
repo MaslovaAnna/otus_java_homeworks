@@ -9,7 +9,7 @@ public class ChangeUsername implements Command {
         String[] startMessage = message.split(" ");
         if (startMessage.length != 2) {
             client.sendMsg("Неверный формат команды /changenick \n" +
-                    "для смены имени пользователя введите: /changenick username \n");
+                           "для смены имени пользователя введите: /changenick username \n");
         } else if (server.getAuthenticatedProvider()
                 .changeUsername(client, startMessage[1])) {
             client.sendMsg("Username успешно изменен на " + startMessage[1]);

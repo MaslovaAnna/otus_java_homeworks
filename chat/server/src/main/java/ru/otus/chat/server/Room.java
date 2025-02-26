@@ -1,8 +1,6 @@
 package ru.otus.chat.server;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Room {
     private int id;
@@ -10,10 +8,9 @@ public class Room {
     private String password;
     private boolean isDeleted = false;
     private LocalDateTime lastActivivtyTime;
+    private String owner;
 
-    private User owner;
-
-    public Room(String name, int id, String password, User owner) {
+    public Room(String name, int id, String password, String owner) {
         this.name = name;
         this.id = id;
         this.password = password;

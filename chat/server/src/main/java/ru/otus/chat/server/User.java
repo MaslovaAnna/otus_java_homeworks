@@ -1,7 +1,6 @@
 package ru.otus.chat.server;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,21 +13,22 @@ public class User {
     private String password;
     private LocalDateTime banTime;
     private boolean permBan = false;
-    private List<Role> roles = new ArrayList<>();
+    private String role;
 
     public User(int id, String username, String login, String password) {
         this.id = id;
         this.username = username;
         this.login = login;
         this.password = password;
-    }
-
-    public void setBanTime(LocalDateTime banTime) {
-        this.banTime = banTime;
+        this.role = role;
     }
 
     public LocalDateTime getBanTime() {
         return banTime;
+    }
+
+    public void setBanTime(LocalDateTime banTime) {
+        this.banTime = banTime;
     }
 
     public boolean isPermBan() {
@@ -71,14 +71,6 @@ public class User {
         this.password = password;
     }
 
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -95,12 +87,12 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", roles=" + roles +
-                '}';
+               "id=" + id +
+               ", username='" + username + '\'' +
+               ", login='" + login + '\'' +
+               ", password='" + password + '\'' +
+               ", role='" + role +
+               '}';
     }
 }
 

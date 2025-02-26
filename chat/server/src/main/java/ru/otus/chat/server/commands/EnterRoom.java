@@ -9,7 +9,7 @@ public class EnterRoom implements Command {
         String[] element = message.split(" ");
         if (element.length > 3) {
             client.sendMsg("Неверный формат команды /enter \n" +
-                    "для в частную комнату введите: /enter roomname password(при наличии)\n");
+                           "для в частную комнату введите: /enter roomname password(при наличии)\n");
         } else if (client.getRoom().equals("server")) {
             if (element.length == 2) {
                 server.getAuthenticatedProvider()

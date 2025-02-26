@@ -14,15 +14,8 @@ public class ClientHandler {
     private DataOutputStream out;
     private String username;
     private Dispatcher dispatcher;
-    private String room = "server";
-
-    public String getRoom() {
-        return room;
-    }
-
-    public void setRoom(String room) {
-        this.room = room;
-    }
+    private String room;
+    private String role;
 
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
@@ -30,6 +23,7 @@ public class ClientHandler {
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
         this.dispatcher = new Dispatcher();
+
 
         new Thread(() -> {
             try {
@@ -46,19 +40,35 @@ public class ClientHandler {
                         disconnect();
                         break;
                     }
-                        currentTime = LocalTime.now();
-                        dispatcher.execute(message, this, server);
-                    }
+                    currentTime = LocalTime.now();
+                    dispatcher.execute(message, this, server);
+                }
 
-        } catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
+    }
+
     public void sendMsg(String message) {
         try {
-                out.writeUTF(message);
+            out.writeUTF(message);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
